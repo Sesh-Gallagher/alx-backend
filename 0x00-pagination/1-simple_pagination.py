@@ -49,7 +49,7 @@ class Server:
         """
         Takes 2 integer arguments and returns requested page from the dataset
         Args: page (int): required page number. must be a positive integer
-              page_size (int): number of records per page. must be a +ve integer
+            page_size (int): number of records per page. must be a +ve integer
         Return: list of lists containing required data from the dataset
         """
         assert type(page) == int and type(page_size) == int
