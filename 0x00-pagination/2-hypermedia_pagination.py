@@ -2,28 +2,11 @@
 """
 Module to Implement a get_hyper method that takes
 the same arguments (and defaults) as get_page and returns
-a dictionary containing the following key-value pairs:
+a dictionary containing the following key-value pairs
 """
 import csv
-import math
-from typing import Dict, List, Tuple
-
-
-def index_range(page: int, page_size: int) -> Tuple[int, int]:
-    """
-    return a tuple of size two containing a start index
-    and an end index corresponding to the range of indexes
-    to return in a list for those particular pagination parameters.
-    Args: page(int): page number to return
-        : page_size (int) number of itenms on a page
-
-    Return: tuple (start_index, end_index)
-    """
-    begin, end = 0, 0
-    for a in range(page):
-        begin = end
-        end += page_size
-    return (begin, end)
+from typing import List
+index_range = __import__('0-simple_helper_function').index_range
 
 
 class Server:
@@ -37,7 +20,10 @@ class Server:
 
     def dataset(self) -> List[List]:
         """
-        Cached dataset
+        Cached dataset that reads from csv file
+        and returns the dataset.
+
+        Returns: List[List]: The dataset.
         """
         if self.__dataset is None:
             with open(self.DATA_FILE) as f:
@@ -47,37 +33,48 @@ class Server:
 
         return self.__dataset
 
+    @staticmethod
+    def assert_positive_integer_type(value: int) -> None:
+        """
+        function that asserts that the value is a positive integer.
+        Args: value (int): value to be asserted.
+        """
+        assert type(value) is int and value > 0
+
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
         """
-        Takes 2 integer arguments and returns requested page from the dataset
-        Args: page (int): required page number. must be a positive integer
-        page_size (int): number of records per page. must be a +ve integer
-        Return: list of lists containing required data from the dataset
-        """
-        assert type(page) == int and type(page_size) == int
-        assert page > 0 and page_size > 0
-        start, end = index_range(page, page_size)
-        data = self.dataset()
-        if start > len(data):
-            return []
-        return data[start:end]
+        Function that returns the csv page of the dataset.
+        Args: page (int): The page number.
+              page_size (int): The page size.
 
-        def get_hyper(self, page: int = 1, page_size: int = 10) -> dict:
-            """
-            Returns a page of the dataset.
-            Args: page (int): The page number.
-            page_size (int): The page size.
-            Returns: List[List]: The page of the dataset.
-            """
+        Returns: List[List]: The page of the dataset.
+        """
+        self.assert_positive_integer_type(page)
+        self.assert_positive_integer_type(page_size)
+        dataset = self.dataset()
+        start, end = index_range(page, page_size)
+        try:
+            data = dataset[start:end]
+        except IndexError:
+            data = []
+        return data
+
+    def get_hyper(self, page: int = 1, page_size: int = 10) -> dict:
+        """
+        Function that returns  page of the csv dataset.
+        Args: page (int): The page number.
+              page_size (int): The page size.
+
+        Returns: List[List]: The page of the dataset.
+        """
         total_pages = len(self.dataset()) // page_size + 1
-        data_set = self.get_page(page, page_size)
-        page_info = {
+        data = self.get_page(page, page_size)
+        cvs_info = {
             "page": page,
-            "page_size": page_size if page_size <= len(data_set)
-            else len(data_set),
+            "page_size": page_size if page_size <= len(data) else len(data),
             "total_pages": total_pages,
-            "data": data_set,
+            "data": data,
             "prev_page": page - 1 if page > 1 else None,
             "next_page": page + 1 if page + 1 <= total_pages else None
         }
-        return page_info
+        return cvs_info
