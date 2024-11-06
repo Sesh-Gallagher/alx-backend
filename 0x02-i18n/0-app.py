@@ -2,14 +2,16 @@
 """
 Module for a Basik Flask app.
 """
-from flask import Flask, render_template
+from flask import Flask
+from flask import render_template
 
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
+
 @app.route('/')
-def get_index() -> str:
+def index():
     """
     Represents and renders a basic home/index html page.
     """
