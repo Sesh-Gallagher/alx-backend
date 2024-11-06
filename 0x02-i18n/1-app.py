@@ -7,22 +7,21 @@ from flask import render_template
 from flask_babel import Babel
 
 
-class config:
+class Config:
     """
     Represents tha application configuration class
     """
-    BABEL_DEFAULT_TIMEZONE = 'UTC'
-    BABEL_DEFAULT_LOCALE = 'en'
     LANGUAGES = ['en', 'fr']
+    BABEL_DEFAULT_LOCALE = 'en'
+    BABEL_DEFAULT_TIMEZONE = 'UTC'
 
 
 app = Flask(__name__)
 app.config.from_object(Config)
 babel = Babel(app)
-app.url_map.strict_slashes = False
 
 
-@app.route('/')
+@app.route('/', strict_slashes=False)
 def index():
     """
     Represents a function that renders a basic html template
